@@ -1,3 +1,15 @@
+<?php
+session_start();
+require_once "bd_utils.php";
+$fase_actual = trobarFasePerData(date("Y-m-d"));
+if ($fase_actual == null) {
+    $fase_actual = obtenirFase(8);
+}
+$_SESSION["fase"] = $fase_actual;
+if (obtenirConcursants("fase", $_SESSION["fase"]["nFase"]) == null) {
+    //crearConcursantsNovaFase(obtenirConcursants("fase", $_SESSION["fase"]["nFase"] - 1));
+}
+?>
 <!DOCTYPE html>
 <html lang="ca">
 
@@ -18,124 +30,35 @@
         </form>
         <br>
         <div class="wrapper">
-            <header>Votació popular del Concurs Internacional de Gossos d'Atura 2023- FASE <span> 1 </span></header>
-            <p class="info"> Podeu votar fins el dia 01/02/2023</p>
+            <header>Votació popular del Concurs Internacional de Gossos d'Atura 2023- FASE <span> <?php echo $_SESSION["fase"]["nFase"] ?> </span></header>
+            <p class="info"> Podeu votar fins el dia <?php echo date("d-m-Y", strtotime($_SESSION["fase"]["dataFi"])) ?></p>
 
             <p class="warning"> Ja has votat al gos MUSCLO. Es modificarà la teva resposta</p>
             <div class="poll-area">
-                <form>
-                    <input type="checkbox" name="poll" id="opt-1">
-                    <input type="checkbox" name="poll" id="opt-2">
-                    <input type="checkbox" name="poll" id="opt-3">
-                    <input type="checkbox" name="poll" id="opt-4">
-                    <input type="checkbox" name="poll" id="opt-5">
-                    <input type="checkbox" name="poll" id="opt-6">
-                    <input type="checkbox" name="poll" id="opt-7">
-                    <input type="checkbox" name="poll" id="opt-8">
-                    <input type="checkbox" name="poll" id="opt-9">
-                    <label for="opt-1" class="opt-1">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Musclo</span>
+                <?php
+                $concursants = obtenirConcursants("fase", strtotime($_SESSION["fase"]["dataFi"]));
+                foreach ($concursants as $concursant) {
+                ?>
+                    <form action="process_votar.php" method="POST">
+                        <input type="hidden" name="id" value="<?php echo $concursant["id"] ?>">
+                        <label for="<?php echo $concursant["id"] ?>" class="<?php echo $concursant["id"] ?>">
+                            <div class="row">
+                                <div class="column">
+                                    <div class="right">
+                                        <span class="text"><?php echo $concursant["nom"] ?></span>
+                                    </div>
+                                    <img class="dog" alt="Musclo" src="img/<?php echo $concursant["imatge"] ?>">
                                 </div>
-                                <img class="dog" alt="Musclo" src="img/g1.png">
                             </div>
-                        </div>
-                    </label>
-                    <label for="opt-2" class="opt-2">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Jingo</span>
-                                </div>
-                                <img class="dog" alt="Jingo" src="img/g2.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-3" class="opt-3">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Xuia</span>
-                                </div>
-                                <img class="dog" alt="Xuia" src="img/g3.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-4" class="opt-4">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Bruc</span>
-                                </div>
-                                <img class="dog" alt="Bruc" src="img/g4.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-5" class="opt-5">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Mango</span>
-                                </div>
-                                <img class="dog" alt="Mango" src="img/g5.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-6" class="opt-6">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Fluski</span>
-                                </div>
-                                <img class="dog" alt="Fluski" src="img/g6.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-7" class="opt-7">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Fonoll</span>
-                                </div>
-                                <img class="dog" alt="Fonoll" src="img/g7.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-8" class="opt-8">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Swing</span>
-                                </div>
-                                <img class="dog" alt="Swing" src="img/g8.png">
-                            </div>
-                        </div>
-                    </label>
-                    <label for="opt-9" class="opt-9">
-                        <div class="row">
-                            <div class="column">
-                                <div class="right">
-                                    <span class="circle"></span>
-                                    <span class="text">Coloma</span>
-                                </div>
-                                <img class="dog" alt="Coloma" src="img/g9.png">
-                            </div>
-                        </div>
-                    </label>
-                </form>
+                            <input type="submit" value="Votar">
+                        </label>
+                    </form>
+                <?php
+                }
+                ?>
             </div>
 
-            <p> Mostra els <a href="resultats.html">resultats</a> de les fases anteriors.</p>
+            <p> Mostra els <a href="resultats.php">resultats</a> de les fases anteriors.</p>
         </div>
     </div>
 

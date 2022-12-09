@@ -8,9 +8,9 @@ class Concursant{
     public string $amo;
     public string $raça;
     public string $fase;
-    public int $vots = 0;
+    public int $vots;
 
-    function __construct(string $nom, string $imatge, string $amo, string $raça, string $fase)
+    function __construct(string $nom, string $imatge, string $amo, string $raça, string $fase, int $vots = 0)
     {
         $this->id = $fase . $nom;
         $this->nom = $nom;
@@ -18,19 +18,22 @@ class Concursant{
         $this->amo = $amo;
         $this->raça = $raça;
         $this->fase = $fase;
+        $this->vots = $vots;
     }
 
     function insert(){
         insert(CONCURSANT, [$this->id, $this->nom, $this->imatge, $this->amo, $this->raça, $this->fase, $this->vots]);
     }
 
-    function borrarVots(): void{
-        //$this->vots = 0;
-        update(CONCURSANT, "vots", 0, "id", $this->id);
+    function updateConcursant(string|int $id_antiga){
+        update(CONCURSANT, "id", $this->id, "id", $id_antiga);
+        update(CONCURSANT, "nom", $this->nom, "id", $id_antiga);
+        update(CONCURSANT, "imatge", $this->imatge, "id", $id_antiga);
+        update(CONCURSANT, "amo", $this->amo, "id", $id_antiga);
+        update(CONCURSANT, "raça", $this->raça, "id", $id_antiga);
     }
 
-    function afegirVot(): void{
-        //$this->vots += 1;
-        incrementarVot(CONCURSANT, "vots", "id", $this->id);
+    function afegirVot(string $id): void{
+        update(CONCURSANT, "vots", $this->vots + 1, "id", $id);
     }
 }

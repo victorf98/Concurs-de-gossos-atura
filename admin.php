@@ -23,15 +23,14 @@ if (!isset($_SESSION["usuari"])) {
                 <div class="admin-row">
                     <h1> Resultat parcial: Fase 1 </h1>
                     <div class="gossos">
-                        <img class="dog" alt="Musclo" title="Musclo 15%" src="img/g1.png">
-                        <img class="dog" alt="Jingo" title="Jingo 45%" src="img/g2.png">
-                        <img class="dog" alt="Xuia" title="Xuia 4%" src="img/g3.png">
-                        <img class="dog" alt="Bruc" title="Bruc 3%" src="img/g4.png">
-                        <img class="dog" alt="Mango" title="Mango 13%" src="img/g5.png">
-                        <img class="dog" alt="Fluski" title="Fluski 12 %" src="img/g6.png">
-                        <img class="dog" alt="Fonoll" title="Fonoll 5%" src="img/g7.png">
-                        <img class="dog" alt="Swing" title="Swing 2%" src="img/g8.png">
-                        <img class="dog eliminat" alt="Coloma" title="Coloma 1%" src="img/g9.png">
+                        <?php
+                        $concursants = obtenirConcursants("fase", 1);
+                            foreach ($concursants as $concursant) {
+                        ?>
+                                <img class="dog" alt="<?php echo $concursant["nom"] ?>" title="<?php echo $concursant["nom"] . " " . $concursant["vots"]?>" src="img/<?php echo $concursant["imatge"] ?>">
+                        <?php
+                            }
+                        ?>
                     </div>
                 </div>
                 <div class="admin-row">
@@ -104,33 +103,41 @@ if (!isset($_SESSION["usuari"])) {
 
                 <div class="admin-row">
                     <h1> Concursants: </h1>
-                    <form>
-                        <input type="text" placeholder="Nom" value="Musclo">
-                        <input type="text" placeholder="Imatge" value="img/g1.png">
-                        <input type="text" placeholder="Amo" value="Joan Pere Arnau">
-                        <input type="text" placeholder="Raça" value="Husky Siberià">
-                        <input type="button" value="Modifica">
-                    </form>
 
-                    <form>
-                        <input type="text" placeholder="Nom">
-                        <input type="text" placeholder="Imatge">
-                        <input type="text" placeholder="Amo">
-                        <input type="text" placeholder="Raça">
-                        <input type="button" value="Afegeix">
+                    <?php 
+                    $concursants = obtenirTotsElsConcursants();
+                        for ($i=0; $i < count($concursants); $i++) { 
+                    ?>
+                    <form action="process_modificar_concursant.php" method="POST">
+                        <input type="text" placeholder="Nom" name="nom" value="<?php echo $concursants[$i]["nom"] ?>">
+                        <input type="text" placeholder="Imatge" name="imatge" value="<?php echo $concursants[$i]["imatge"] ?>">
+                        <input type="text" placeholder="Amo" name="amo" value="<?php echo $concursants[$i]["amo"] ?>">
+                        <input type="text" placeholder="Raça" name="raça" value="<?php echo $concursants[$i]["raça"] ?>">
+                        <input type="submit" value="Modifica">
+                    </form>
+                    <?php
+                        }
+                    ?>
+
+                    <form action="process_afegir_concursant.php" method="POST">
+                        <input type="text" name="nom" placeholder="Nom">
+                        <input type="text" name="imatge" placeholder="Imatge">
+                        <input type="text" name="amo" placeholder="Amo">
+                        <input type="text" name="raça" placeholder="Raça">
+                        <input type="submit" value="Afegeix">
                     </form>
                 </div>
 
                 <div class="admin-row">
                     <h1> Altres operacions: </h1>
-                    <form>
+                    <form action="process_esborrar_vots.php" method="POST">
                         Esborra els vots de la fase
-                        <input type="number" placeholder="Fase" value="">
-                        <input type="button" value="Esborra">
+                        <input type="number" name="nFase" placeholder="Fase" value="">
+                        <input type="submit" value="Esborra">
                     </form>
-                    <form>
+                    <form action="process_esborrar_vots.php" method="POST">
                         Esborra tots els vots
-                        <input type="button" value="Esborra">
+                        <input type="submit" value="Esborra">
                     </form>
                 </div>
             </div>
